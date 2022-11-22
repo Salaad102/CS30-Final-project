@@ -1,4 +1,4 @@
-#proposal
+# proposal
 Plants vs Zombies
 ## Needs to have list
 1) 5 different enemy types
@@ -7,6 +7,7 @@ Plants vs Zombies
 4) shovel to dig up plants
 5) rain sunlight to collect
 6) lane detection
+7) creating a grid for the lawn
 
 ## Nice to have list
 1) different level themes
