@@ -13,3 +13,15 @@ function setup() {
 function draw() {
   background(220);
 }
+
+class Plants {
+  constructor(x, y,){
+    this.x = x;
+    this.y = y;
+    
+  }
+
+  display(){
+    //
+  }
+}
