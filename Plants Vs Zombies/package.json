@@ -21,7 +21,8 @@
       "no-unused-vars": "off"
     },
     "globals": {
-
+      "mouse": true,
+      "Sprite": true,
       "width": true,
       "height": true,
       "drawingContext": true,
