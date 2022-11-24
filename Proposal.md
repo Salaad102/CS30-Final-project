@@ -8,6 +8,7 @@ Plants vs Zombies
 5) rain sunlight to collect
 6) lane detection
 7) creating a grid for the lawn
+8) sound
 
 ## Nice to have list
 1) different level themes
