@@ -48,17 +48,46 @@ function displayGrid(grid){
       }
     }
   }
-  
 }
 
 class Plants {
-  constructor(x, y){
+  constructor(x, y, theImage){
     this.x = x;
     this.y = y;
-    
+    this.img = theImage;
+    this.bulletAR = [];
   }
 
   display(){
     //
+  }
+
+  animate(){
+    // change the image to animate it.
+  }
+
+  update(){
+    //
+  }
+}
+
+class Bullet {
+  constructor(x, y, dx, theImage){
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+    this.img = theImage;
+  }
+
+  display(){
+    
+  }
+
+  update(){
+    this.x += this.dx;
+  }
+
+  isHitTarget(){
+    return this.x >= width; // fix
   }
 }
