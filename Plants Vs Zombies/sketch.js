@@ -2,10 +2,14 @@
 // Salaar Ahmed
 // November 22, 2022
 //
-// Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// Ideas:
+// - Have the plants in a 2d array
+// - Have the zombies act like a mouse detection if in grid?
+// - Learn how to use p5.play sprite() function.
+
+let state = "Menu";
 let grid;
-const ROWS = 6;
+const ROWS = 7;
 const COLS = 10;
 let cellHeight;
 let cellWidth;
@@ -20,10 +24,15 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   cellHeight = height/ROWS;
   cellWidth = width/COLS;
+  grid = create2dArray(COLS, ROWS);
+  // for (let y=0; y<ROWS; y++){
+  //   //
+  // } figure out how to make one full row with just 1's 
 }
 
 function draw() {
   background(220);
+  displayGrid(grid);
 }
 
 function create2dArray(COLS, ROWS) {
@@ -32,9 +41,9 @@ function create2dArray(COLS, ROWS) {
     emptyArray.push([]);
     for (let x=0; x<COLS; x++){
       emptyArray[y].push(0);
-    }
-    return emptyArray;
+    } 
   }
+  return emptyArray;
 }
 
 function displayGrid(grid){
@@ -59,7 +68,7 @@ class Plants {
   }
 
   display(){
-    //
+    image(this.img, this.x, this.y);
   }
 
   animate(){
@@ -80,14 +89,38 @@ class Bullet {
   }
 
   display(){
-    
+    image(this.img, this.x, this.y);
   }
 
   update(){
-    this.x += this.dx;
+    if (!this.isHitTarget()){
+      this.x += this.dx;
+    }
   }
 
   isHitTarget(){
-    return this.x >= width; // fix
+    return this.x >= width; // fix to >= zombie x
   }
 }
+
+class Zombie {
+  constructor(x, y, dx, theImage){
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+    this.img = theImage;
+  }
+
+  display(){
+    image(this.img, this.x, this.y);
+  }
+
+  update(){
+    this.x -= this.dx; //moving right to left
+  }
+
+  isDead(){
+    //
+  }
+}
+
