@@ -7,6 +7,7 @@
 // - Have the zombies act like a mouse detection if in grid?
 // - Learn how to use p5.play sprite() function.
 // Things to add to Plant constuctor: fireSpeed, bulletSpeed?, 
+// sunflower, PeaShooter, Walnut, boxing lettuce?, plant that fights in a circle radius  
 
 let state = "Menu";
 let grid;
@@ -15,7 +16,7 @@ const COLS = 10;
 let cellHeight;
 let cellWidth;
 let lawnIMG, concreteIMG;
-let box1; 
+let shopButton; 
 
 function preload(){
   lawnIMG = loadImage("grass.png");
@@ -27,16 +28,13 @@ function setup() {
   cellHeight = height/ROWS;
   cellWidth = width/COLS;
   grid = create2dArray(COLS, ROWS);
-  box1 = new Button(width/2, height/2, 200, 200);
-  // for (let y=0; y<ROWS; y++){
-  //   //
-  // } figure out how to make one full row with just 1's 
+  shopButton = new Button(0, height - 200, 200, 200, "red");
 }
 
 function draw() {
   background(220);
   displayGrid(grid);
-  box1.display();
+  shopButton.display();
 }
 
 function create2dArray(COLS, ROWS) {
@@ -64,16 +62,17 @@ function displayGrid(grid){
 }
 
 class Button {
-  constructor(x, y, height, width){
+  constructor(x, y, height, width, color){
     this.x = x;
     this.y = y;
     this.height = height;
     this.width = width;
+    this.color = color;
   }
 
   display(){
     if (this.mouseIsHovering()){
-      fill("red");
+      fill(this.color);
     }
     else{
       fill("black");
@@ -88,12 +87,13 @@ class Button {
 }
 
 class Plants {
-  constructor(x, y, theImage, damage, fireSpeed){
+  constructor(x, y, theImage, damage, fireSpeed, health){
     this.x = x;
     this.y = y;
     this.img = theImage;
     this.damage = damage;
     this.fireSpeed = fireSpeed;
+    this.health = health;
     this.bulletAR = [];
   }
 
@@ -111,7 +111,7 @@ class Plants {
 }
 
 class Bullet {
-  constructor(x, y, dx, theImage,){
+  constructor(x, y, dx, theImage){
     this.x = x;
     this.y = y;
     this.dx = dx;
@@ -123,8 +123,9 @@ class Bullet {
   }
 
   update(){
+    this.x += this.dx;
     if (!this.isHitTarget()){ // make bullet disapear after.
-      this.x += this.dx;
+      this.bulletAR.splice(this.bulletAR.indexOf(this), 1);
     }
   }
 
@@ -156,3 +157,8 @@ class Zombie {
   }
 }
 
+function mousePressed(){
+  if (shopButton.mouseIsHovering()){
+    state = "shop";
+  }
+}
