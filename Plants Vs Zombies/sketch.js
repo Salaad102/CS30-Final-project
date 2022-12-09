@@ -11,7 +11,7 @@
 
 let state = "Menu";
 let grid;
-const ROWS = 7;
+const ROWS = 6  ;
 const COLS = 10;
 let cellHeight;
 let cellWidth;
@@ -71,13 +71,24 @@ class Button {
   }
 
   display(){
-    if (this.mouseIsHovering()){
-      fill(this.color);
+    if (state === "Menu"){
+      if (this.mouseIsHovering()){
+        fill(this.color);
+      }
+      else{
+        fill("black");
+      } 
+      rect(this.x, this.y, this.width, this.height);
     }
-    else{
-      fill("black");
+    else if (state === "Shop") {
+      if (this.mouseIsHovering()){
+        fill("black");
+      }
+      else{
+        fill(this.color);
+      } 
+      rect(this.x, this.y, this.width, this.height);
     }
-    rect(this.x, this.y, this.width, this.height);
   }
 
   mouseIsHovering(){
@@ -158,7 +169,10 @@ class Zombie {
 }
 
 function mousePressed(){
-  if (shopButton.mouseIsHovering()){
-    state = "shop";
+  if (shopButton.mouseIsHovering() && state === "Menu"){
+    state = "Shop";
+  }
+  else if (shopButton.mouseIsHovering() && state === "Shop") {
+    state = "Menu";
   }
 }
