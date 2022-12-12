@@ -7,7 +7,8 @@
 // - Have the zombies act like a mouse detection if in grid?
 // - Learn how to use p5.play sprite() function.
 // Things to add to Plant constuctor: fireSpeed, bulletSpeed?, 
-// sunflower, PeaShooter, Walnut, boxing lettuce?, plant that fights in a circle radius  
+// sunflower, PeaShooter, Walnut, boxing lettuce?, plant that fights in other lanes a circle radius 
+// Zombie, Buckethead Zombie, ConeZombie - All have different health depending on item they are wearing. 
 
 let state = "Menu";
 let grid;
@@ -16,7 +17,7 @@ const COLS = 10;
 let cellHeight;
 let cellWidth;
 let lawnIMG, concreteIMG;
-let shopButton; 
+let shopButton, backShopButton, peaPlantButton, sunflowerPlantButton, walnutPlantButton;
 
 function preload(){
   lawnIMG = loadImage("grass.png");
@@ -28,7 +29,9 @@ function setup() {
   cellHeight = height/ROWS;
   cellWidth = width/COLS;
   grid = create2dArray(COLS, ROWS);
-  shopButton = new Button(0, height - 200, 200, 200, "red");
+  shopButton = new Button(0, height - 200, 200, 200, "white", true);
+  // backShopButton = new Button();
+  // peaPlantButton = new Button();
 }
 
 function draw() {
@@ -62,22 +65,30 @@ function displayGrid(grid){
 }
 
 class Button {
-  constructor(x, y, height, width, color){
+  constructor(x, y, height, width, color, state,){
     this.x = x;
     this.y = y;
     this.height = height;
     this.width = width;
     this.color = color;
+    this.state = state;
+  }
+
+  update(){
+    
   }
 
   display(){
-    if (this.mouseIsHovering()){
-      fill(this.color);
-    }
-    else{
-      fill("black");
-    }
-    rect(this.x, this.y, this.width, this.height);
+    if (this.state){
+      if (this.mouseIsHovering()){
+        fill(this.color);
+      }
+      else{
+        fill("black");
+      }
+      rect(this.x, this.y, this.width, this.height);
+    } 
+    
   }
 
   mouseIsHovering(){
@@ -160,5 +171,6 @@ class Zombie {
 function mousePressed(){
   if (shopButton.mouseIsHovering()){
     state = "shop";
+    shopButton.state = !shopButton.state;
   }
 }
