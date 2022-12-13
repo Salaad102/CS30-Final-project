@@ -30,7 +30,7 @@ function setup() {
   cellWidth = width/COLS;
   grid = create2dArray(COLS, ROWS);
   shopButton = new Button(0, height - 200, 200, 200, "white", true);
-  // backShopButton = new Button();
+  backShopButton = new Button(0, height-200, 200, 200, "green", false);
   // peaPlantButton = new Button();
 }
 
@@ -65,7 +65,7 @@ function displayGrid(grid){
 }
 
 class Button {
-  constructor(x, y, height, width, color, state,){
+  constructor(x, y, height, width, color, state){
     this.x = x;
     this.y = y;
     this.height = height;
@@ -169,8 +169,11 @@ class Zombie {
 }
 
 function mousePressed(){
-  if (shopButton.mouseIsHovering()){
-    state = "shop";
-    shopButton.state = !shopButton.state;
+  if (shopButton.state){
+    if (shopButton.mouseIsHovering()){
+      state = "shop";
+      shopButton.state = !shopButton.state;
+      backShopButton.state = !backShopButton.state;
+    }
   }
 }
