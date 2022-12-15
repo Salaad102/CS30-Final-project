@@ -88,8 +88,13 @@ class Button {
       }
       rect(this.x, this.y, this.width, this.height);
     } 
-    
   }
+
+  // clicked(){
+  //   if (this.mouseIsHovering && mousePressed()){
+  //     console.log("amogus");
+  //   }
+  // }
 
   mouseIsHovering(){
     return mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height;
@@ -119,6 +124,11 @@ class Plants {
   update(){
     //
   }
+
+  mouseIsHovering(){
+    return mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height;
+  }
+
 }
 
 class Bullet {
