@@ -10,8 +10,7 @@
 // sunflower, PeaShooter, Walnut, boxing lettuce?, plant that fights in other lanes a circle radius 
 // Zombie, Buckethead Zombie, ConeZombie - All have different health depending on item they are wearing. 
 
-let listOfStates = ["Menu", "Game", "Shop"];
-let gameState = listOfStates[0];
+let gameState = "Menu";
 let grid;
 const ROWS = 7;
 const COLS = 10;
@@ -31,17 +30,22 @@ function setup() {
   cellWidth = width/COLS;
   grid = create2dArray(COLS, ROWS);
   startButton = new Button(width/2, height/2, 200, 400, "black", "grey", "Menu", "Game", CENTER); //Button will apear in the "Menu" State & change to "Game" state when clicked
-  shopButton = new Button(0, height - 200, 200, 200, "white", "black", "Game", "Shop"); //Button will apear in the "Game" State & change to "Shop" state when clicked
-  backShopButton = new Button(0, height - 200, 200, 200, "green", "red", "Shop", "Game"); //Button will apear in the "Shop" State & change to "Game" state when clicked
-  // peaPlantButton = new Button();
+  shopButton = new Button(0, height - 200, 200, 200, "white", "black", "Game", "Shop", CORNER); //Button will apear in the "Game" State & change to "Shop" state when clicked
+  backShopButton = new Button(width - 200, height - 200, 200, 200, "green", "red", "Shop", "Game", CORNER); //Button will apear in the "Shop" State & change to "Game" state when clicked
+  peaPlantButton = new Button(width/2, height/2, 150, 150, "purple", "orange", "Shop", "Plants", CENTER);
 }
 
 function draw() {
+  console.log(gameState);
   background(220);
   displayGrid(grid);
   startButton.display();
+
   shopButton.display();
-  
+
+  backShopButton.display();
+
+  peaPlantButton.display();
 }
 
 function create2dArray(COLS, ROWS) {
@@ -87,7 +91,6 @@ class Button {
 
   display(){
     if (gameState === this.state){
-      this.clicked();
       if (this.mouseIsHovering()){
         fill(this.color1);
       }
@@ -99,17 +102,14 @@ class Button {
     } 
   }
 
-  clicked(){
-    if (this.mouseIsHovering && mouseIsPressed){
-      gameState = this.changeState;
-    }
-  }
-
   mouseIsHovering(){
     if (this.rectMode === CENTER){
       return mouseX > this.x - this.width/2 && mouseX < this.x + this.width/2 && mouseY > this.y - this.height/2 && mouseY < this.y + this.height/2;
     }
-    return mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height;
+    else if (this.rectMode === CORNER) {
+      return mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height;
+    }
+    
   }
 
 }
@@ -191,8 +191,25 @@ class Zombie {
 }
 
 function mousePressed(){
-  if (shopButton.mouseIsHovering()){
-    //
+  if (gameState === startButton.state) {
+    if (startButton.mouseIsHovering()){
+      gameState = startButton.changeState;
+    }
+  }
+  if (gameState === shopButton.state) {
+    if (shopButton.mouseIsHovering()){
+      gameState = shopButton.changeState;
+    }
+  }
+  if (gameState === backShopButton.state) {
+    if (backShopButton.mouseIsHovering()){
+      gameState = backShopButton.changeState;
+    }
+  }
+  if (gameState === peaPlantButton.state) {
+    if (peaPlantButton.mouseIsHovering()){
+      gameState = peaPlantButton  .changeState;
+    }
   }
 
 }
