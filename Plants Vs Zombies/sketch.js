@@ -18,6 +18,7 @@ let cellHeight;
 let cellWidth;
 let lawnIMG, concreteIMG;
 let shopButton, startButton, backShopButton, peaPlantButton, sunflowerPlantButton, walnutPlantButton;
+let peaPlant;
 
 function preload(){
   lawnIMG = loadImage("grass.png");
@@ -35,10 +36,7 @@ function setup() {
   peaPlantButton = new Button(width/2, height/2, 150, 150, "purple", "orange", "Shop", "Plants", CENTER);
 }
 
-function draw() {
-  console.log(gameState);
-  background(220);
-  displayGrid(grid);
+function buttonStartups(){
   startButton.display();
 
   shopButton.display();
@@ -46,6 +44,13 @@ function draw() {
   backShopButton.display();
 
   peaPlantButton.display();
+}
+
+function draw() {
+  console.log(gameState);
+  background(220);
+  displayGrid(grid);
+  buttonStartups();
 }
 
 function create2dArray(COLS, ROWS) {
@@ -127,6 +132,7 @@ class Plants {
 
   display(){
     image(this.img, this.x, this.y);
+    peaPlant = new Sprite();
   }
 
   animate(){
