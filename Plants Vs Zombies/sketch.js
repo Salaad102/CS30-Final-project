@@ -11,6 +11,7 @@
 // Zombie, Buckethead Zombie, ConeZombie - All have different health depending on item they are wearing.
 // Ask Ben if he premade variables for his sprites? Maybe ask Saabir?
 
+let peaPlantAR = []; let counter = 0;
 let gameState = "Menu";
 let grid;
 const ROWS = 7;
@@ -26,7 +27,21 @@ function preload(){
   concreteIMG = loadImage("stone.png");
 }
 
+function createNewPlant(){
+  // counter++;
+  // peaPlantAR.push(counter);
+  // peaPlantAR = new Sprite();
+
+  for (let i=0; i<peaPlantAR.length; i++){
+    peaPlantAR.push(i);
+    peaPlantAR[i] = new Sprite();
+    // peaPlantAR[i].x = mouse.x;
+    // peaPlantAR[i].y = mouse.y;
+  }
+}
+
 function setup() {
+  
   createCanvas(windowWidth, windowHeight);
   cellHeight = height/ROWS;
   cellWidth = width/COLS;
@@ -34,7 +49,7 @@ function setup() {
   startButton = new Button(width/2, height/2, 200, 400, "black", "grey", "Menu", "Game", CENTER); //Button will apear in the "Menu" State & change to "Game" state when clicked
   shopButton = new Button(0, height - 200, 200, 200, "white", "black", "Game", "Shop", CORNER); //Button will apear in the "Game" State & change to "Shop" state when clicked
   backShopButton = new Button(width - 200, height - 200, 200, 200, "green", "red", "Shop", "Game", CORNER); //Button will apear in the "Shop" State & change to "Game" state when clicked
-  peaPlantButton = new Button(width/2, height/2, 150, 150, "purple", "orange", "Shop", "Plants", CENTER);
+  peaPlantButton = new Button(width/2, height/2, 150, 150, "purple", "orange", "Shop", "PlacePlants", CENTER);
 }
 
 function buttonStartups(){
@@ -52,6 +67,7 @@ function draw() {
   background(220);
   displayGrid(grid);
   buttonStartups();
+  
 }
 
 function create2dArray(COLS, ROWS) {
@@ -219,8 +235,14 @@ function mousePressed(){
   }
   if (gameState === peaPlantButton.state) {
     if (peaPlantButton.mouseIsHovering()){
-      gameState = peaPlantButton  .changeState;
+      gameState = peaPlantButton.changeState;
     }
+  }
+  if (gameState === )
+
+  if (gameState === "Plants"){
+    createNewPlant();
+    gameState = "Game";
   }
 
 }
