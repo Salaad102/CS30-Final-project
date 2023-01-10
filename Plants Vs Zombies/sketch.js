@@ -8,7 +8,8 @@
 // - Learn how to use p5.play sprite() function.
 // Things to add to Plant constuctor: fireSpeed, bulletSpeed?, 
 // sunflower, PeaShooter, Walnut, boxing lettuce?, plant that fights in other lanes a circle radius 
-// Zombie, Buckethead Zombie, ConeZombie - All have different health depending on item they are wearing. 
+// Zombie, Buckethead Zombie, ConeZombie - All have different health depending on item they are wearing.
+// Ask Ben if he premade variables for his sprites? Maybe ask Saabir?
 
 let gameState = "Menu";
 let grid;
@@ -137,6 +138,10 @@ class Plants {
 
   animate(){
     // change the image to animate it.
+  }
+
+  newSprite(){
+    
   }
 
   update(){
