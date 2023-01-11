@@ -11,7 +11,7 @@
 // Zombie, Buckethead Zombie, ConeZombie - All have different health depending on item they are wearing.
 // Ask Ben if he premade variables for his sprites? Maybe ask Saabir?
 
-let peaPlantAR = []; let counter = 0;
+let peaPlantAR = []; let counter = 0; let PlantPlaced;
 let gameState = "Menu";
 let grid;
 const ROWS = 7;
@@ -27,18 +27,19 @@ function preload(){
   concreteIMG = loadImage("stone.png");
 }
 
-function createNewPlant(){
-  // counter++;
-  // peaPlantAR.push(counter);
-  // peaPlantAR = new Sprite();
+// function createNewPlant(){
+//   // counter++;
+//   // peaPlantAR.push(counter);
+//   // peaPlantAR = new Sprite();
 
-  for (let i=0; i<peaPlantAR.length; i++){
-    peaPlantAR.push(i);
-    peaPlantAR[i] = new Sprite();
-    // peaPlantAR[i].x = mouse.x;
-    // peaPlantAR[i].y = mouse.y;
-  }
-}
+//   for (let i=0; i<peaPlantAR.length; i++){
+//     peaPlantAR.push(i);
+//     peaPlantAR[i] = new Sprite();
+//     // peaPlantAR[i].x = mouse.x;
+//     // peaPlantAR[i].y = mouse.y;
+//   }
+// }
+
 
 function setup() {
   
@@ -49,7 +50,7 @@ function setup() {
   startButton = new Button(width/2, height/2, 200, 400, "black", "grey", "Menu", "Game", CENTER); //Button will apear in the "Menu" State & change to "Game" state when clicked
   shopButton = new Button(0, height - 200, 200, 200, "white", "black", "Game", "Shop", CORNER); //Button will apear in the "Game" State & change to "Shop" state when clicked
   backShopButton = new Button(width - 200, height - 200, 200, 200, "green", "red", "Shop", "Game", CORNER); //Button will apear in the "Shop" State & change to "Game" state when clicked
-  peaPlantButton = new Button(width/2, height/2, 150, 150, "purple", "orange", "Shop", "PlacePlants", CENTER);
+  peaPlantButton = new Button(width/2, height/2, 150, 150, "purple", "orange", "Shop", "Plants", CENTER);
 }
 
 function buttonStartups(){
@@ -67,7 +68,9 @@ function draw() {
   background(220);
   displayGrid(grid);
   buttonStartups();
-  
+  if (gameState === "PlacingPlant") {
+    peaPlant.moveTowards(mouse, 0.1);
+  }
 }
 
 function create2dArray(COLS, ROWS) {
@@ -131,9 +134,7 @@ class Button {
     else if (this.rectMode === CORNER) {
       return mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height;
     }
-    
   }
-
 }
 
 class Plants {
@@ -149,15 +150,10 @@ class Plants {
 
   display(){
     image(this.img, this.x, this.y);
-    peaPlant = new Sprite();
   }
 
   animate(){
     // change the image to animate it.
-  }
-
-  newSprite(){
-    
   }
 
   update(){
@@ -218,31 +214,58 @@ class Zombie {
 }
 
 function mousePressed(){
-  if (gameState === startButton.state) {
+  if (gameState === startButton.state) { //Start Button
     if (startButton.mouseIsHovering()){
       gameState = startButton.changeState;
     }
   }
-  if (gameState === shopButton.state) {
+  if (gameState === shopButton.state) { //Shop button
     if (shopButton.mouseIsHovering()){
       gameState = shopButton.changeState;
     }
   }
-  if (gameState === backShopButton.state) {
+  if (gameState === backShopButton.state) { //Back Button
     if (backShopButton.mouseIsHovering()){
       gameState = backShopButton.changeState;
     }
   }
-  if (gameState === peaPlantButton.state) {
+  if (gameState === peaPlantButton.state) { // Pea Plant Button
     if (peaPlantButton.mouseIsHovering()){
       gameState = peaPlantButton.changeState;
     }
   }
-  if (gameState === )
-
-  if (gameState === "Plants"){
-    createNewPlant();
-    gameState = "Game";
+  if (gameState === peaPlantButton.changeState){
+    peaPlant = new Sprite(mouseX, mouseY, 50, 50); // Figure out how to 
+    peaPlant.shapeColor = color(255,0,0);
+    gameState = "PlacingPlant";
   }
+
+  // if(gameState === "PlacingPlant") {
+  //   PlantPlaced = true;
+  // }
+
+  if (PlantPlaced){
+    gameState = "Game";
+    PlantPlaced = false;
+  }
+}
+
+// function update() {
+//   switch(gameState) {
+//     case "PlacingPlant":
+//       if(/* condition to check if a plant is placed */) {
+//         PlantPlaced = true;
+//       }
+//       break;
+//       case "PlantIsPlaced":
+//         /* code to run another function */
+//         break;
+//       case "Game":
+//         /* code to run the game */
+//         break;
+//       }
+// } 
+
+function mouseReleased(){
 
 }
