@@ -243,10 +243,15 @@ function mousePressed(){
   //   peaPlant.collider = "k";
   //   gameState = "PlacingPlant";
   // }
-
-  if(gameState === "PlacingPlant") {
-    PlantPlaced = true;
+  if (gameState === peaPlantButton.changeState){
+    peaPlant = new Sprite(mouseX, mouseY, 50, 50); // 
+    peaPlant.shapeColor = color(255,0,0);
+    peaPlant.collider = "k";
+    gameState = "PlacingPlant";
   }
+
+  
+  
   
 }
 
@@ -271,11 +276,8 @@ function doubleClicked(){
 // } 
 
 function mouseReleased(){
-  if (gameState === peaPlantButton.changeState){
-    peaPlant = new Sprite(mouseX, mouseY, 50, 50); // 
-    peaPlant.shapeColor = color(255,0,0);
-    peaPlant.collider = "k";
-    gameState = "PlacingPlant";
+  if(gameState === "PlacingPlant") { // Checks if mouseclicked while in placing plants mode
+    PlantPlaced = true;
   }
 
   if (PlantPlaced){
