@@ -69,7 +69,8 @@ function draw() {
   displayGrid(grid);
   buttonStartups();
   if (gameState === "PlacingPlant") {
-    peaPlant.moveTowards(mouse, 0.1);
+    peaPlant.x = mouse.x;
+    peaPlant.y = mouse.y;
   }
 }
 
@@ -234,20 +235,23 @@ function mousePressed(){
       gameState = peaPlantButton.changeState;
     }
   }
-  if (gameState === peaPlantButton.changeState){
-    peaPlant = new Sprite(mouseX, mouseY, 50, 50); // Figure out how to 
-    peaPlant.shapeColor = color(255,0,0);
-    gameState = "PlacingPlant";
-  }
 
-  // if(gameState === "PlacingPlant") {
-  //   PlantPlaced = true;
+
+  // if (gameState === peaPlantButton.changeState){
+  //   peaPlant = new Sprite(mouseX, mouseY, 50, 50); // 
+  //   peaPlant.shapeColor = color(255,0,0);
+  //   peaPlant.collider = "k";
+  //   gameState = "PlacingPlant";
   // }
 
-  if (PlantPlaced){
-    gameState = "Game";
-    PlantPlaced = false;
+  if(gameState === "PlacingPlant") {
+    PlantPlaced = true;
   }
+  
+}
+
+function doubleClicked(){
+  
 }
 
 // function update() {
@@ -267,5 +271,15 @@ function mousePressed(){
 // } 
 
 function mouseReleased(){
+  if (gameState === peaPlantButton.changeState){
+    peaPlant = new Sprite(mouseX, mouseY, 50, 50); // 
+    peaPlant.shapeColor = color(255,0,0);
+    peaPlant.collider = "k";
+    gameState = "PlacingPlant";
+  }
 
+  if (PlantPlaced){
+    gameState = "Game";
+    PlantPlaced = false;
+  }
 }
