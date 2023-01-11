@@ -249,10 +249,6 @@ function mousePressed(){
     peaPlant.collider = "k";
     gameState = "PlacingPlant";
   }
-
-  
-  
-  
 }
 
 function doubleClicked(){
@@ -283,5 +279,13 @@ function mouseReleased(){
   if (PlantPlaced){
     gameState = "Game";
     PlantPlaced = false;
+  }
+
+  if (peaPlantButton.mouseIsHovering()) { // This part needs fixing
+    let gridX = floor(peaPlant.position.x / (width / grid[0].length));
+    let gridY = floor(peaPlant.position.y / (height / grid.length));
+    grid[gridY][gridX] = 1;
+    peaPlant.position.x = gridX * (width / grid[0].length) + (width / grid[0].length) / 2;
+    peaPlant.position.y = gridY * (height / grid.length) + (height / grid.length) / 2;
   }
 }
