@@ -11,7 +11,7 @@
 // Zombie, Buckethead Zombie, ConeZombie - All have different health depending on item they are wearing.
 // Ask Ben if he premade variables for his sprites? Maybe ask Saabir?
 
-let peaPlantAR = []; let counter = 0; let PlantPlaced; let plantType;
+let PlantPlaced; let plantType;
 let gameState = "Menu";
 let grid;
 const ROWS = 7;
@@ -21,6 +21,7 @@ let cellWidth;
 let lawnIMG, concreteIMG;
 let shopButton, startButton, backShopButton, peaPlantButton, sunflowerPlantButton, walnutPlantButton;
 let peaPlant, walnut;
+let peaPlantAR, walnutAR;
 let placePlant;
 
 function preload(){
@@ -263,9 +264,27 @@ function putPlantInGrid(plant){
     let gridY = Math.floor(plant.y / cellHeight);
     if (grid[gridY][gridX] === 0){
       grid[gridY][gridX] = 1;
+      plant.x = gridX * (width / grid[0].length) + width / grid[0].length / 2;
+      plant.y = gridY * (height / grid.length) + height / grid.length / 2;
+      placePlant = false;
+      
     }
-    plant.x = gridX * (width / grid[0].length) + width / grid[0].length / 2;
-    plant.y = gridY * (height / grid.length) + height / grid.length / 2;
-    placePlant = false;
+    else{
+      peaPlant.remove();
+    }
+    
+  }
+}
+
+class plantNumberAR {
+  constructor(plant){
+    this.plant = plant;
+  }
+
+  createPlantAR(){
+  }
+
+  update(){
+
   }
 }
