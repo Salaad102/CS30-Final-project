@@ -21,6 +21,7 @@ let cellWidth;
 let lawnIMG, concreteIMG;
 let shopButton, startButton, backShopButton, peaPlantButton, sunflowerPlantButton, walnutPlantButton;
 let peaPlant, walnut;
+let placePlant;
 
 function preload(){
   lawnIMG = loadImage("grass.png");
@@ -28,7 +29,6 @@ function preload(){
 }
 
 function setup() {
-  
   createCanvas(windowWidth, windowHeight);
   cellHeight = height/ROWS;
   cellWidth = width/COLS;
@@ -67,11 +67,7 @@ function draw() {
       walnut.x = mouse.x;
       walnut.y = mouse.y;
     }
-  }
-  if (gameState === "PlacingPlant"){
-    console.log(peaPlant.x, peaPlant.y);
-  }
-  
+  } 
 }
 
 function create2dArray(COLS, ROWS) {
@@ -111,10 +107,6 @@ class Button {
     this.state = state;
     this.changeState = changeState;
     this.rectMode = modeOfRect;
-  }
-
-  update(){
-    
   }
 
   display(){
@@ -216,33 +208,26 @@ class Zombie {
   }
 }
 
+function checkButton(button){
+  if (gameState === button.state) {
+    if (button.mouseIsHovering()) {
+      gameState = button.changeState;
+    }
+  }
+}
+
 function mousePressed(){
-  if (gameState === startButton.state) { //Start Button
-    if (startButton.mouseIsHovering()){
-      gameState = startButton.changeState;
-    }
-  }
-  if (gameState === shopButton.state) { //Shop button
-    if (shopButton.mouseIsHovering()){
-      gameState = shopButton.changeState;
-    }
-  }
-  if (gameState === backShopButton.state) { //Back Button
-    if (backShopButton.mouseIsHovering()){
-      gameState = backShopButton.changeState;
-    }
-  }
-  if (gameState === peaPlantButton.state) { // Pea Plant Button
-    if (peaPlantButton.mouseIsHovering()){
-      gameState = peaPlantButton.changeState;
-    }
-  }
-  if (gameState === peaPlantButton.changeState){
+  checkButton(startButton);
+  checkButton(shopButton);
+  checkButton(backShopButton);
+  checkButton(peaPlantButton);
+  if (gameState === peaPlantButton.changeState){ // Turn this into a function
     peaPlant = new Sprite(mouseX, mouseY, 50, 50); // dragging peaPlant
     peaPlant.shapeColor = color(255,0,0);
     peaPlant.collider = "k";
     gameState = "PlacingPlant";
     plantType = "Pea";
+    placePlant = true;
   }
   if (gameState === walnutPlantButton.state) { // Pea Plant Button
     if (walnutPlantButton.mouseIsHovering()){
@@ -255,6 +240,7 @@ function mousePressed(){
     walnut.collider = "k";
     gameState = "PlacingPlant";
     plantType = "Walnut";
+    placePlant = true;
   }
 }
 
@@ -262,41 +248,24 @@ function mouseReleased(){
   if(gameState === "PlacingPlant") { // Checks if mouseclicked while in placing plants mode
     PlantPlaced = true;
   }
-
-  if (PlantPlaced){
+  if (PlantPlaced){ // When mouse is released, turns gameState back to Game
     gameState = "Game";
     PlantPlaced = false;
   }
 
-  if (peaPlantButton.mouseIsHovering()) { // This part needs fixing
-    if (gameState === "PlacingPlant") {
-      let gridX = Math.floor(peaPlant.x / (width / grid[0].length));
-      let gridY = Math.floor(peaPlant.y / (height / grid.length));
+  putPlantInGrid(peaPlant); //Only works for 1
+  putPlantInGrid(walnut);
+}
+
+function putPlantInGrid(plant){
+  if (placePlant) {
+    let gridX = Math.floor(plant.x / cellWidth);
+    let gridY = Math.floor(plant.y / cellHeight);
+    if (grid[gridY][gridX] === 0){
       grid[gridY][gridX] = 1;
-      peaPlant.x = gridX * (width / grid[0].length) + width / grid[0].length / 2;
-      peaPlant.y = gridY * (height / grid.length) + height / grid.length / 2;
     }
-    
+    plant.x = gridX * (width / grid[0].length) + width / grid[0].length / 2;
+    plant.y = gridY * (height / grid.length) + height / grid.length / 2;
+    placePlant = false;
   }
 }
-
-function doubleClicked(){
-  
-}
-
-// function update() {
-//   switch(gameState) {
-//     case "PlacingPlant":
-//       if(/* condition to check if a plant is placed */) {
-//         PlantPlaced = true;
-//       }
-//       break;
-//       case "PlantIsPlaced":
-//         /* code to run another function */
-//         break;
-//       case "Game":
-//         /* code to run the game */
-//         break;
-//       }
-// } 
-
