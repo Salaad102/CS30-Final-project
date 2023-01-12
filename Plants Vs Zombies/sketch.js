@@ -11,7 +11,7 @@
 // Zombie, Buckethead Zombie, ConeZombie - All have different health depending on item they are wearing.
 // Ask Ben if he premade variables for his sprites? Maybe ask Saabir?
 
-let peaPlantAR = []; let counter = 0; let PlantPlaced;
+let peaPlantAR = []; let counter = 0; let PlantPlaced; let plantType;
 let gameState = "Menu";
 let grid;
 const ROWS = 7;
@@ -20,26 +20,12 @@ let cellHeight;
 let cellWidth;
 let lawnIMG, concreteIMG;
 let shopButton, startButton, backShopButton, peaPlantButton, sunflowerPlantButton, walnutPlantButton;
-let peaPlant;
+let peaPlant, walnut;
 
 function preload(){
   lawnIMG = loadImage("grass.png");
   concreteIMG = loadImage("stone.png");
 }
-
-// function createNewPlant(){
-//   // counter++;
-//   // peaPlantAR.push(counter);
-//   // peaPlantAR = new Sprite();
-
-//   for (let i=0; i<peaPlantAR.length; i++){
-//     peaPlantAR.push(i);
-//     peaPlantAR[i] = new Sprite();
-//     // peaPlantAR[i].x = mouse.x;
-//     // peaPlantAR[i].y = mouse.y;
-//   }
-// }
-
 
 function setup() {
   
@@ -51,6 +37,7 @@ function setup() {
   shopButton = new Button(0, height - 200, 200, 200, "white", "black", "Game", "Shop", CORNER); //Button will apear in the "Game" State & change to "Shop" state when clicked
   backShopButton = new Button(width - 200, height - 200, 200, 200, "green", "red", "Shop", "Game", CORNER); //Button will apear in the "Shop" State & change to "Game" state when clicked
   peaPlantButton = new Button(width/2, height/2, 150, 150, "purple", "orange", "Shop", "Plants", CENTER);
+  walnutPlantButton = new Button(width/4, height/2, 150, 150, "purple", "yellow", "Shop", "Plants", CENTER);
 }
 
 function buttonStartups(){
@@ -61,17 +48,30 @@ function buttonStartups(){
   backShopButton.display();
 
   peaPlantButton.display();
+
+  walnutPlantButton.display();
 }
 
 function draw() {
+  rectMode(CORNER);
   console.log(gameState);
   background(220);
   displayGrid(grid);
   buttonStartups();
   if (gameState === "PlacingPlant") {
-    peaPlant.x = mouse.x;
-    peaPlant.y = mouse.y;
+    if (plantType === "Pea"){
+      peaPlant.x = mouse.x;
+      peaPlant.y = mouse.y;
+    }
+    if (plantType === "Walnut"){
+      walnut.x = mouse.x;
+      walnut.y = mouse.y;
+    }
   }
+  if (gameState === "PlacingPlant"){
+    console.log(peaPlant.x, peaPlant.y);
+  }
+  
 }
 
 function create2dArray(COLS, ROWS) {
@@ -89,7 +89,9 @@ function displayGrid(grid){
   for (let y=0; y<ROWS; y++){
     for (let x=0; x <COLS; x++){
       if (grid[y][x] === 0){
-        image(lawnIMG, x*cellWidth, y*cellHeight, cellWidth, cellHeight);
+        fill(0,150,0,255);
+        rect(x*cellWidth, y*cellHeight, cellWidth, cellHeight);
+        // image(lawnIMG, x*cellWidth, y*cellHeight, cellWidth, cellHeight);
       }
       else if(grid[y][x] === 1){
         image(concreteIMG, x*cellWidth, y*cellHeight, cellWidth, cellHeight);
@@ -235,19 +237,46 @@ function mousePressed(){
       gameState = peaPlantButton.changeState;
     }
   }
-
-
-  // if (gameState === peaPlantButton.changeState){
-  //   peaPlant = new Sprite(mouseX, mouseY, 50, 50); // 
-  //   peaPlant.shapeColor = color(255,0,0);
-  //   peaPlant.collider = "k";
-  //   gameState = "PlacingPlant";
-  // }
   if (gameState === peaPlantButton.changeState){
-    peaPlant = new Sprite(mouseX, mouseY, 50, 50); // 
+    peaPlant = new Sprite(mouseX, mouseY, 50, 50); // dragging peaPlant
     peaPlant.shapeColor = color(255,0,0);
     peaPlant.collider = "k";
     gameState = "PlacingPlant";
+    plantType = "Pea";
+  }
+  if (gameState === walnutPlantButton.state) { // Pea Plant Button
+    if (walnutPlantButton.mouseIsHovering()){
+      gameState = walnutPlantButton.changeState;
+    }
+  }
+  if (gameState === walnutPlantButton.changeState){
+    walnut = new Sprite(mouseX, mouseY, 50, 50); // dragging walnutPlant
+    walnut.shapeColor = color(255,255,0);
+    walnut.collider = "k";
+    gameState = "PlacingPlant";
+    plantType = "Walnut";
+  }
+}
+
+function mouseReleased(){
+  if(gameState === "PlacingPlant") { // Checks if mouseclicked while in placing plants mode
+    PlantPlaced = true;
+  }
+
+  if (PlantPlaced){
+    gameState = "Game";
+    PlantPlaced = false;
+  }
+
+  if (peaPlantButton.mouseIsHovering()) { // This part needs fixing
+    if (gameState === "PlacingPlant") {
+      let gridX = Math.floor(peaPlant.x / (width / grid[0].length));
+      let gridY = Math.floor(peaPlant.y / (height / grid.length));
+      grid[gridY][gridX] = 1;
+      peaPlant.x = gridX * (width / grid[0].length) + width / grid[0].length / 2;
+      peaPlant.y = gridY * (height / grid.length) + height / grid.length / 2;
+    }
+    
   }
 }
 
@@ -271,21 +300,3 @@ function doubleClicked(){
 //       }
 // } 
 
-function mouseReleased(){
-  if(gameState === "PlacingPlant") { // Checks if mouseclicked while in placing plants mode
-    PlantPlaced = true;
-  }
-
-  if (PlantPlaced){
-    gameState = "Game";
-    PlantPlaced = false;
-  }
-
-  if (peaPlantButton.mouseIsHovering()) { // This part needs fixing
-    let gridX = floor(peaPlant.position.x / (width / grid[0].length));
-    let gridY = floor(peaPlant.position.y / (height / grid.length));
-    grid[gridY][gridX] = 1;
-    peaPlant.position.x = gridX * (width / grid[0].length) + (width / grid[0].length) / 2;
-    peaPlant.position.y = gridY * (height / grid.length) + (height / grid.length) / 2;
-  }
-}
