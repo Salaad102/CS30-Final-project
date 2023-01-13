@@ -39,6 +39,7 @@ function setup() {
   backShopButton = new Button(width - 200, height - 200, 200, 200, "green", "red", "Shop", "Game", CORNER); //Button will apear in the "Shop" State & change to "Game" state when clicked
   peaPlantButton = new Button(width/2, height/2, 150, 150, "purple", "orange", "Shop", "Plants", CENTER);
   walnutPlantButton = new Button(width/4, height/2, 150, 150, "purple", "yellow", "Shop", "Plants", CENTER);
+
 }
 
 function buttonStartups(){
@@ -217,31 +218,44 @@ function checkButton(button){
   }
 }
 
+// function placeThePlant(plant, plantButton, typeOfPlant){
+//   if (gameState === plantButton.changeState){
+//     if (plantButton.mouseIsHovering()){
+//       plant = new Sprite(mouseX, mouseY, 50, 50);
+//       plant.color = "white";
+//       plant.collider = "k";
+//       plantType = typeOfPlant;
+//       placePlant = true;
+//     }
+//   }
+// }
+
 function mousePressed(){
   checkButton(startButton);
   checkButton(shopButton);
   checkButton(backShopButton);
   checkButton(peaPlantButton);
+  checkButton(walnutPlantButton);
+  // placeThePlant(peaPlant, peaPlantButton, "Pea");
   if (gameState === peaPlantButton.changeState){ // Turn this into a function
-    peaPlant = new Sprite(mouseX, mouseY, 50, 50); // dragging peaPlant
-    peaPlant.shapeColor = color(255,0,0);
-    peaPlant.collider = "k";
-    gameState = "PlacingPlant";
-    plantType = "Pea";
-    placePlant = true;
-  }
-  if (gameState === walnutPlantButton.state) { // Pea Plant Button
-    if (walnutPlantButton.mouseIsHovering()){
-      gameState = walnutPlantButton.changeState;
+    if (peaPlantButton.mouseIsHovering()){
+      peaPlant = new Sprite(mouseX, mouseY, 50, 50); // dragging peaPlant
+      peaPlant.shapeColor = color(255,0 ,0);
+      peaPlant.collider = "k";
+      gameState = "PlacingPlant";
+      plantType = "Pea";
+      placePlant = true;
     }
   }
   if (gameState === walnutPlantButton.changeState){
-    walnut = new Sprite(mouseX, mouseY, 50, 50); // dragging walnutPlant
-    walnut.shapeColor = color(255,255,0);
-    walnut.collider = "k";
-    gameState = "PlacingPlant";
-    plantType = "Walnut";
-    placePlant = true;
+    if (walnutPlantButton.mouseIsHovering()){
+      walnut = new Sprite(mouseX, mouseY, 50, 50); // dragging walnutPlant
+      walnut.shapeColor = color(255,255,0);
+      walnut.collider = "k";
+      gameState = "PlacingPlant";
+      plantType = "Walnut";
+      placePlant = true;
+    }
   }
 }
 
@@ -260,6 +274,7 @@ function mouseReleased(){
 
 function putPlantInGrid(plant){
   if (placePlant) {
+    console.log(plant);
     let gridX = Math.floor(plant.x / cellWidth);
     let gridY = Math.floor(plant.y / cellHeight);
     if (grid[gridY][gridX] === 0){
