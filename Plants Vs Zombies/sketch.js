@@ -11,7 +11,8 @@
 // Zombie, Buckethead Zombie, ConeZombie - All have different health depending on item they are wearing.
 // Ask Ben if he premade variables for his sprites? Maybe ask Saabir?
 
-let PlantPlaced; let plantType;
+let PlantPlaced; let plantType; let removingPlant;
+let peaPlantCreated = false, walnutCreated = false, shovelCreated = false;
 let gameState = "Menu";
 let grid;
 const ROWS = 7;
@@ -22,6 +23,7 @@ let lawnIMG, concreteIMG;
 let shopButton, startButton, backShopButton, peaPlantButton, sunflowerPlantButton, walnutPlantButton;
 let peaPlant, walnut;
 let peaPlantAR, walnutAR;
+let shovelButton, shovel;
 let placePlant;
 
 function preload(){
@@ -39,6 +41,7 @@ function setup() {
   backShopButton = new Button(width - 200, height - 200, 200, 200, "green", "red", "Shop", "Game", CORNER); //Button will apear in the "Shop" State & change to "Game" state when clicked
   peaPlantButton = new Button(width/2, height/2, 150, 150, "purple", "orange", "Shop", "Plants", CENTER);
   walnutPlantButton = new Button(width/4, height/2, 150, 150, "purple", "yellow", "Shop", "Plants", CENTER);
+  shovelButton = new Button(width/2 + width/4, height/2, 150, 150, "purple", "blue", "Shop", "Plants", CENTER);
 
 }
 
@@ -52,6 +55,8 @@ function buttonStartups(){
   peaPlantButton.display();
 
   walnutPlantButton.display();
+
+  shovelButton.display();
 }
 
 function draw() {
@@ -68,6 +73,10 @@ function draw() {
     if (plantType === "Walnut"){
       walnut.x = mouse.x;
       walnut.y = mouse.y;
+    }
+    if (plantType === "Shovel") {
+      shovel.x = mouse.x;
+      shovel.y = mouse.y;
     }
   } 
 }
@@ -236,9 +245,22 @@ function mousePressed(){
   checkButton(backShopButton);
   checkButton(peaPlantButton);
   checkButton(walnutPlantButton);
+  checkButton(shovelButton);
+  if (gameState === shovelButton.changeState){
+    if (shovelButton.mouseIsHovering()){
+      shovelCreated = true;
+      shovel = new Sprite(mouseX, mouseY, 50,50);
+      shovel.shapeColor = color(0,155,155);
+      shovel.collider = "k";
+      gameState = "PlacingPlant";
+      plantType = "Shovel";
+      removingPlant = true;
+    }
+  }
   // placeThePlant(peaPlant, peaPlantButton, "Pea");
   if (gameState === peaPlantButton.changeState){ // Turn this into a function
     if (peaPlantButton.mouseIsHovering()){
+      peaPlantCreated = true;
       peaPlant = new Sprite(mouseX, mouseY, 50, 50); // dragging peaPlant
       peaPlant.shapeColor = color(255,0 ,0);
       peaPlant.collider = "k";
@@ -249,6 +271,7 @@ function mousePressed(){
   }
   if (gameState === walnutPlantButton.changeState){
     if (walnutPlantButton.mouseIsHovering()){
+      walnutCreated = true;
       walnut = new Sprite(mouseX, mouseY, 50, 50); // dragging walnutPlant
       walnut.shapeColor = color(255,255,0);
       walnut.collider = "k";
@@ -267,27 +290,52 @@ function mouseReleased(){
     gameState = "Game";
     PlantPlaced = false;
   }
-
-  putPlantInGrid(peaPlant); //Only works for 1
-  putPlantInGrid(walnut);
+  removePlant(shovel, peaPlant);
+  removePlant(shovel, walnut);
+  putPlantInGrid(peaPlant, peaPlantCreated);
+  putPlantInGrid(walnut, walnutCreated); //Only works for 1
+  
 }
 
-function putPlantInGrid(plant){
+function removePlant(shovel, plant) { // Problem here
+  if (removePlant){
+    if (shovelCreated){
+      let gridX = Math.floor(shovel.x / cellWidth);
+      let gridY = Math.floor(shovel.y / cellHeight);
+      if (grid[gridY][gridX] === 1) {
+        grid[gridY][gridX] = 0;
+        // plant.remove(); HOW TO DETECT WHICH ONE TO REMOVE
+        console.log("removed");
+        shovelCreated = false;
+      }
+      shovel.remove();
+    }
+  }
+}
+
+function putPlantInGrid(plant, plantcreatedtype){
   if (placePlant) {
-    console.log(plant);
-    let gridX = Math.floor(plant.x / cellWidth);
-    let gridY = Math.floor(plant.y / cellHeight);
-    if (grid[gridY][gridX] === 0){
-      grid[gridY][gridX] = 1;
-      plant.x = gridX * (width / grid[0].length) + width / grid[0].length / 2;
-      plant.y = gridY * (height / grid.length) + height / grid.length / 2;
-      placePlant = false;
-      
+    if (plantcreatedtype){
+      let gridX = Math.floor(plant.x / cellWidth);
+      let gridY = Math.floor(plant.y / cellHeight);
+      if (grid[gridY][gridX] === 0){
+        grid[gridY][gridX] = 1;
+        plant.x = gridX * (width / grid[0].length) + width / grid[0].length / 2;
+        plant.y = gridY * (height / grid.length) + height / grid.length / 2;
+        placePlant = false;
+        plantcreatedtype = false;
+      }
+      else{
+        //
+      }
     }
-    else{
-      peaPlant.remove();
-    }
-    
+    // if (shovelCreated){
+    //   let gridX = Math.floor(shovel.x / cellWidth);
+    //   let gridY = Math.floor(shovel.y / cellHeight);
+    //   if (grid[gridY][gridX] === 1) {
+    //     grid[gridY][gridX] = 0;
+    //   }
+    // }
   }
 }
 
