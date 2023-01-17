@@ -11,7 +11,7 @@
 // Zombie, Buckethead Zombie, ConeZombie - All have different health depending on item they are wearing.
 // Ask Ben if he premade variables for his sprites? Maybe ask Saabir?
 
-let PlantPlaced; let plantType; let removingPlant;
+let PlantPlaced = false; let plantType; let removingPlant;
 let peaPlantCreated = false, walnutCreated = false, shovelCreated = false;
 let gameState = "Menu";
 let grid;
@@ -227,17 +227,19 @@ function checkButton(button){
   }
 }
 
-// function placeThePlant(plant, plantButton, typeOfPlant){
-//   if (gameState === plantButton.changeState){
-//     if (plantButton.mouseIsHovering()){
-//       plant = new Sprite(mouseX, mouseY, 50, 50);
-//       plant.color = "white";
-//       plant.collider = "k";
-//       plantType = typeOfPlant;
-//       placePlant = true;
-//     }
-//   }
-// }
+function placeThePlant(spriteName, plantButton, typeOfPlant, plantCreated, color){
+  if (gameState === plantButton.changeState){
+    if (plantButton.mouseIsHovering()){
+      plantCreated = true;
+      spriteName = new Sprite(mouseX, mouseY, 50, 50);
+      spriteName.color = color;
+      spriteName.collider = "k";
+      gameState = "PlacingPlant";
+      plantType = typeOfPlant;
+      placePlant = true;
+    }
+  }
+}
 
 function mousePressed(){
   checkButton(startButton);
@@ -257,7 +259,6 @@ function mousePressed(){
       removingPlant = true;
     }
   }
-  // placeThePlant(peaPlant, peaPlantButton, "Pea");
   if (gameState === peaPlantButton.changeState){ // Turn this into a function
     if (peaPlantButton.mouseIsHovering()){
       peaPlantCreated = true;
@@ -282,6 +283,8 @@ function mousePressed(){
   }
 }
 
+
+
 function mouseReleased(){
   if(gameState === "PlacingPlant") { // Checks if mouseclicked while in placing plants mode
     PlantPlaced = true;
@@ -289,33 +292,34 @@ function mouseReleased(){
   if (PlantPlaced){ // When mouse is released, turns gameState back to Game
     gameState = "Game";
     PlantPlaced = false;
-  }
-  removePlant(shovel, peaPlant);
+  } 
   removePlant(shovel, walnut);
+  removePlant(shovel, peaPlant);
+
+  putPlantInGrid(walnut, walnutCreated); 
   putPlantInGrid(peaPlant, peaPlantCreated);
-  putPlantInGrid(walnut, walnutCreated); //Only works for 1
+  //Only works for 1
   
 }
 
 function removePlant(shovel, plant) { // Problem here
-  if (removePlant){
-    if (shovelCreated){
-      let gridX = Math.floor(shovel.x / cellWidth);
-      let gridY = Math.floor(shovel.y / cellHeight);
-      if (grid[gridY][gridX] === 1) {
-        grid[gridY][gridX] = 0;
-        // plant.remove(); HOW TO DETECT WHICH ONE TO REMOVE
-        console.log("removed");
-        shovelCreated = false;
-      }
-      shovel.remove();
+  if (shovelCreated){
+    let gridX = Math.floor(shovel.x / cellWidth);
+    let gridY = Math.floor(shovel.y / cellHeight);
+    if (grid[gridY][gridX] === 1) {
+      grid[gridY][gridX] = 0;
+      plant.remove();
+      shovelCreated = false;
     }
+    shovel.remove();
   }
 }
 
-function putPlantInGrid(plant, plantcreatedtype){
+// peaplantcreated = true
+
+function putPlantInGrid(plant, plantCreatedType){
   if (placePlant) {
-    if (plantcreatedtype){
+    if (plantCreatedType){
       let gridX = Math.floor(plant.x / cellWidth);
       let gridY = Math.floor(plant.y / cellHeight);
       if (grid[gridY][gridX] === 0){
@@ -323,10 +327,11 @@ function putPlantInGrid(plant, plantcreatedtype){
         plant.x = gridX * (width / grid[0].length) + width / grid[0].length / 2;
         plant.y = gridY * (height / grid.length) + height / grid.length / 2;
         placePlant = false;
-        plantcreatedtype = false;
+        walnutCreated = false;
+        peaPlantCreated = false;
       }
-      else{
-        //
+      else if (grid[gridY][gridX] === 1){
+        plant.remove();
       }
     }
     // if (shovelCreated){
