@@ -255,7 +255,6 @@ function mousePressed(){
       shovel = new Sprite(mouseX, mouseY, 50,50);
       shovel.shapeColor = color(0,155,155);
       shovel.collider = "k";
-      peaPlant.layer = 1;
       gameState = "PlacingPlant";
       plantType = "Shovel";
       removingPlant = true;
@@ -267,7 +266,6 @@ function mousePressed(){
       peaPlant = new Sprite(mouseX, mouseY, 50, 50); // dragging peaPlant
       peaPlant.shapeColor = color(255,0 ,0);
       peaPlant.collider = "k";
-      peaPlant.layer = 1;
       gameState = "PlacingPlant";
       plantType = "Pea";
       placePlant = true;
@@ -280,7 +278,6 @@ function mousePressed(){
       walnut = new Sprite(mouseX, mouseY, 50, 50); // dragging walnutPlant
       walnut.shapeColor = color(255,255,0);
       walnut.collider = "k";
-      peaPlant.layer = 1;
       gameState = "PlacingPlant";
       plantType = "Walnut";
       placePlant = true;
@@ -300,9 +297,9 @@ function mouseReleased(){
   } 
   
 
-  putPlantInGrid(walnut, walnutCreated); 
+  putPlantInGrid(walnut, walnutCreated);
+  removePlant(shovel, walnut); 
   putPlantInGrid(peaPlant, peaPlantCreated);
-  removePlant(shovel, walnut);
   removePlant(shovel, peaPlant);
   //Only works for 1
   
@@ -312,13 +309,16 @@ function removePlant(shovel, plant) { // Problem here
   if (shovelCreated){
     let gridX = Math.floor(shovel.x / cellWidth);
     let gridY = Math.floor(shovel.y / cellHeight);
-    let grid1X = Math.floor(peaPlantAR[0].x / cellWidth);
-    let grid1Y = Math.floor(peaPlantAR[0].y / cellHeight);
     if (grid[gridY][gridX] === 1) {
       grid[gridY][gridX] = 0;
-      if (grid[grid1X][grid1Y]) {
-        
+      let grid1X = Math.floor(peaPlantAR[0].x / cellWidth);
+      let grid1Y = Math.floor(peaPlantAR[0].y / cellHeight);
+      for (let i=0; i<peaPlantAR.length; i++){
+        if (peaPlantAR[i].x === grid[grid1Y][grid1X]*cellWidth){
+          peaPlantAR[i].remove();
+        }
       }
+      
       // plant.remove(); // how to specify which plant to remove
       shovelCreated = false;
     }
