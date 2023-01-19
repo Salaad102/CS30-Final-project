@@ -9,7 +9,8 @@
 // Things to add to Plant constuctor: fireSpeed, bulletSpeed?, 
 // sunflower, PeaShooter, Walnut, boxing lettuce?, plant that fights in other lanes a circle radius 
 // Zombie, Buckethead Zombie, ConeZombie - All have different health depending on item they are wearing.
-// Ask Ben if he premade variables for his sprites? Maybe ask Saabir?
+// if sound is not playing play sound
+// History printing press, 
 
 let PlantPlaced = false; let plantType; let removingPlant;
 let peaPlantCreated = false, walnutCreated = false, shovelCreated = false;
@@ -310,13 +311,13 @@ function mouseReleased(){
     gameState = "Game";
     PlantPlaced = false;
   } 
-  
+  removePlant();
   putPlantInGrid(walnut, walnutCreated);
   putPlantInGrid(peaPlant, peaPlantCreated);
-  removePlant(shovel);
+  
 }
 
-function removePlant(shovel) { // Problem here
+function removePlant() { // Problem here
   if (shovelCreated){
     let gridX = Math.floor(shovel.x / cellWidth);
     let gridY = Math.floor(shovel.y / cellHeight);
@@ -331,12 +332,10 @@ function removePlant(shovel) { // Problem here
 }
 
 function checkPlantAR(plantAR){
-  let gridX = Math.floor(shovel.x / cellWidth);
-  let gridY = Math.floor(shovel.y / cellHeight);
-  let grid1X = gridX * (width / grid[0].length) + width / grid[0].length / 2;
-  let grid1Y = gridY * (height / grid.length) + height / grid.length / 2;
+  let grid1X = Math.floor(shovel.x / cellWidth) * (width / grid[0].length) + width / grid[0].length / 2;
+  let grid1Y = Math.floor(shovel.y / cellHeight) * (height / grid.length) + height / grid.length / 2;
   for (let i=0; i<plantAR.length; i++){
-    if (plantAR[i].x === grid1X && plantAR[i].y === grid1Y){
+    if (plantAR[i].x === grid1X && plantAR[i].y === grid1Y){ // move this
       plantAR[i].remove();
       plantAR.splice(plantAR.indexOf(this), 1);
     }
