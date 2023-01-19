@@ -15,14 +15,14 @@ let PlantPlaced = false; let plantType; let removingPlant;
 let peaPlantCreated = false, walnutCreated = false, shovelCreated = false;
 let gameState = "Menu";
 let grid;
-const ROWS = 7;
-const COLS = 10;
+const ROWS = 8;
+const COLS = 11;
 let cellHeight;
 let cellWidth;
 let lawnIMG, concreteIMG;
-let shopButton, startButton, backShopButton, peaPlantButton, sunflowerPlantButton, walnutPlantButton;
+let shopButton, startButton, backShopButton, peaPlantButton, sunflowerPlantButton, walnutPlantButton, instructionsbutton;
 let peaPlant, walnut;
-let peaPlantAR = [], walnutAR;
+let peaPlantAR = [], walnutAR = [];
 let shovelButton, shovel;
 let placePlant;
 
@@ -36,6 +36,7 @@ function setup() {
   cellHeight = height/ROWS;
   cellWidth = width/COLS;
   grid = create2dArray(COLS, ROWS);
+  instructionsbutton = new Button(width/2, height/2 + height/4, 150, 300, "black", "grey", "Menu", "Rules", CENTER);
   startButton = new Button(width/2, height/2, 200, 400, "black", "grey", "Menu", "Game", CENTER); //Button will apear in the "Menu" State & change to "Game" state when clicked
   shopButton = new Button(0, height - 200, 200, 200, "white", "black", "Game", "Shop", CORNER); //Button will apear in the "Game" State & change to "Shop" state when clicked
   backShopButton = new Button(width - 200, height - 200, 200, 200, "green", "red", "Shop", "Game", CORNER); //Button will apear in the "Shop" State & change to "Game" state when clicked
@@ -47,6 +48,8 @@ function setup() {
 
 function buttonStartups(){
   startButton.display();
+
+  instructionsbutton.display();
 
   shopButton.display();
 
@@ -83,11 +86,16 @@ function draw() {
 
 function create2dArray(COLS, ROWS) {
   let emptyArray = [];
-  for (let y=0; y<ROWS; y++){
-    emptyArray.push([]);
-    for (let x=0; x<COLS; x++){
-      emptyArray[y].push(0);
-    } 
+  for (let i = 0; i < ROWS; i++) {
+    emptyArray[i] = Array(COLS);
+    for (let j = 0; j < COLS; j++) {
+      if (i === 0) {
+        emptyArray[i][j] = 2;
+      } 
+      else {
+        emptyArray[i][j] = 0;
+      }
+    }
   }
   return emptyArray;
 }
@@ -102,6 +110,10 @@ function displayGrid(grid){
       }
       else if(grid[y][x] === 1){
         image(concreteIMG, x*cellWidth, y*cellHeight, cellWidth, cellHeight);
+      }
+      else if (grid[y][x] === 2){
+        fill(155,155,155);
+        rect(x*cellWidth, y*cellHeight, cellWidth, cellHeight);
       }
     }
   }
@@ -249,6 +261,7 @@ function mousePressed(){
   checkButton(peaPlantButton);
   checkButton(walnutPlantButton);
   checkButton(shovelButton);
+  checkButton(instructionsbutton);
   if (gameState === shovelButton.changeState){
     if (shovelButton.mouseIsHovering()){
       shovelCreated = true;
@@ -281,8 +294,10 @@ function mousePressed(){
       gameState = "PlacingPlant";
       plantType = "Walnut";
       placePlant = true;
+      walnutAR.push(walnut);
     }
   }
+  
 }
 
 
@@ -296,36 +311,37 @@ function mouseReleased(){
     PlantPlaced = false;
   } 
   
-
   putPlantInGrid(walnut, walnutCreated);
-  removePlant(shovel, walnut); 
   putPlantInGrid(peaPlant, peaPlantCreated);
-  removePlant(shovel, peaPlant);
-  //Only works for 1
-  
+  removePlant(shovel);
 }
 
-function removePlant(shovel, plant) { // Problem here
+function removePlant(shovel) { // Problem here
   if (shovelCreated){
     let gridX = Math.floor(shovel.x / cellWidth);
     let gridY = Math.floor(shovel.y / cellHeight);
     if (grid[gridY][gridX] === 1) {
       grid[gridY][gridX] = 0;
-      let grid1X = Math.floor(peaPlantAR[0].x / cellWidth);
-      let grid1Y = Math.floor(peaPlantAR[0].y / cellHeight);
-      for (let i=0; i<peaPlantAR.length; i++){
-        if (peaPlantAR[i].x === grid[grid1Y][grid1X]*cellWidth){
-          peaPlantAR[i].remove();
-        }
-      }
-      
-      // plant.remove(); // how to specify which plant to remove
+      checkPlantAR(peaPlantAR);
+      checkPlantAR(walnutAR);
       shovelCreated = false;
     }
     shovel.remove();
   }
 }
 
+function checkPlantAR(plantAR){
+  let gridX = Math.floor(shovel.x / cellWidth);
+  let gridY = Math.floor(shovel.y / cellHeight);
+  let grid1X = gridX * (width / grid[0].length) + width / grid[0].length / 2;
+  let grid1Y = gridY * (height / grid.length) + height / grid.length / 2;
+  for (let i=0; i<plantAR.length; i++){
+    if (plantAR[i].x === grid1X && plantAR[i].y === grid1Y){
+      plantAR[i].remove();
+      plantAR.splice(plantAR.indexOf(this), 1);
+    }
+  }
+}
 
 function putPlantInGrid(plant, plantCreatedType){
   if (placePlant) {
@@ -336,22 +352,17 @@ function putPlantInGrid(plant, plantCreatedType){
         grid[gridY][gridX] = 1;
         plant.x = gridX * (width / grid[0].length) + width / grid[0].length / 2;
         plant.y = gridY * (height / grid.length) + height / grid.length / 2;
-        placePlant = false;
         walnutCreated = false;
-        peaPlantCreated = false; // maybe return?
+        placePlant = false;
+        peaPlantCreated = false;
+        plantCreatedType = false; // maybe return?
       }
       else if (grid[gridY][gridX] === 1){
         plant.remove();
       }
     }
-    // if (shovelCreated){
-    //   let gridX = Math.floor(shovel.x / cellWidth);
-    //   let gridY = Math.floor(shovel.y / cellHeight);
-    //   if (grid[gridY][gridX] === 1) {
-    //     grid[gridY][gridX] = 0;
-    //   }
-    // }
   }
+  
 }
 
 class plantNumberAR {
