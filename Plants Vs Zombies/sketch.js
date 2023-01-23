@@ -23,9 +23,14 @@ let cellWidth;
 let lawnIMG, concreteIMG;
 let shopButton, startButton, backShopButton, peaPlantButton, sunflowerPlantButton, walnutPlantButton, instructionsbutton;
 let peaPlant, walnut;
+let plantAR;
+let tempPlant;
 let peaPlantAR = [], walnutAR = [];
+let zombieAR =[];
+let buttonAR = [], button;
 let shovelButton, shovel;
 let placePlant;
+let zombie, zombieCreated = false;
 
 function preload(){
   lawnIMG = loadImage("grass.png");
@@ -37,30 +42,28 @@ function setup() {
   cellHeight = height/ROWS;
   cellWidth = width/COLS;
   grid = create2dArray(COLS, ROWS);
-  instructionsbutton = new Button(width/2, height/2 + height/4, 150, 300, "black", "grey", "Menu", "Rules", CENTER);
-  startButton = new Button(width/2, height/2, 200, 400, "black", "grey", "Menu", "Game", CENTER); //Button will apear in the "Menu" State & change to "Game" state when clicked
-  shopButton = new Button(0, height - 200, 200, 200, "white", "black", "Game", "Shop", CORNER); //Button will apear in the "Game" State & change to "Shop" state when clicked
-  backShopButton = new Button(width - 200, height - 200, 200, 200, "green", "red", "Shop", "Game", CORNER); //Button will apear in the "Shop" State & change to "Game" state when clicked
-  peaPlantButton = new Button(width/2, height/2, 150, 150, "purple", "orange", "Shop", "Plants", CENTER);
-  walnutPlantButton = new Button(width/4, height/2, 150, 150, "purple", "yellow", "Shop", "Plants", CENTER);
-  shovelButton = new Button(width/2 + width/4, height/2, 150, 150, "purple", "blue", "Shop", "Plants", CENTER);
+  button = new Button(width/2, height/2 + height/4, 150, 300, "black", "grey", "Menu", "Rules", CENTER); // instructions
+  buttonAR.push(button);
+  button = new Button(width/2, height/2, 200, 400, "black", "grey", "Menu", "Game", CENTER); // start
+  buttonAR.push(button);
+  button = new Button(0, height - 200, 200, 200, "white", "black", "Game", "Shop", CORNER); // shop
+  buttonAR.push(button);
+  button = new Button(width - 200, height - 200, 200, 200, "green", "red", "Shop", "Game", CORNER); // back
+  buttonAR.push(button);
+  button = new Button(width/2, height/2, 150, 150, "purple", "orange", "Shop", "plant1", CENTER); // peaplant
+  buttonAR.push(button);
+  button = new Button(width/4, height/2, 150, 150, "purple", "yellow", "Shop", "plant2", CENTER); // walnut
+  buttonAR.push(button);
+  button = new Button(width/2 + width/4, height/2, 150, 150, "purple", "blue", "Shop", "shovel", CENTER); //shovel
+  buttonAR.push(button);
 
 }
 
-function buttonStartups(){
-  startButton.display();
-
-  instructionsbutton.display();
-
-  shopButton.display();
-
-  backShopButton.display();
-
-  peaPlantButton.display();
-
-  walnutPlantButton.display();
-
-  shovelButton.display();
+function movePlant(plant, spriteName){
+  if (plantType === plant){
+    spriteName.x = mouse.x;
+    spriteName.y = mouse.y;
+  }
 }
 
 function draw() {
@@ -68,21 +71,18 @@ function draw() {
   console.log(gameState);
   background(220);
   displayGrid(grid);
-  buttonStartups();
+  buttonsupdate();
+  if (gameState[2] === "a"){
+    checkPlant();
+  }
   if (gameState === "PlacingPlant") {
-    if (plantType === "Pea"){
-      peaPlant.x = mouse.x;
-      peaPlant.y = mouse.y;
-    }
-    if (plantType === "Walnut"){
-      walnut.x = mouse.x;
-      walnut.y = mouse.y;
-    }
-    if (plantType === "Shovel") {
-      shovel.x = mouse.x;
-      shovel.y = mouse.y;
-    }
+    movePlant("Pea", peaPlant);
+    movePlant("Walnut", walnut);
+    movePlant("Shovel", shovel);
   } 
+  if (zombieCreated){
+    checkObjectInSquare(grid);
+  }
 }
 
 function create2dArray(COLS, ROWS) {
@@ -113,11 +113,35 @@ function displayGrid(grid){
         image(concreteIMG, x*cellWidth, y*cellHeight, cellWidth, cellHeight);
       }
       else if (grid[y][x] === 2){
-        fill(155,155,155);
+        fill("lightblue");
         rect(x*cellWidth, y*cellHeight, cellWidth, cellHeight);
       }
     }
   }
+}
+
+function keyPressed(){
+  if (keyCode === 48){
+    zombieCreated = true;
+    zombie = new Sprite(windowWidth-1, );
+    zombieAR.push(zombie);
+    
+  }
+}
+
+function checkObjectInSquare(grid) {
+  for (let y = 0; y < ROWS; y++) {
+    for (let x = 0; x < COLS; x++) {
+      // Check if the object is within the square's boundaries
+      if (zombie.x >= x * cellWidth && zombie.x < (x + 1) * cellWidth &&
+          zombie.x >= y * cellHeight && zombie.x < (y + 1) * cellHeight) {
+        console.log("Object is in square at (" + x + ", " + y + ")");
+        return {x:x, y:y};
+      }
+    }
+  }
+  console.log("Object is not in any square");
+  return {x:-1,y:-1};
 }
 
 class Button {
@@ -147,6 +171,14 @@ class Button {
     } 
   }
 
+  clicked(){
+    if( gameState === this.state){
+      if (this.mouseIsHovering() && mousePressed){
+        gameState = this.changeState;
+      } 
+    }
+  }
+
   mouseIsHovering(){
     if (this.rectMode === CENTER){
       return mouseX > this.x - this.width/2 && mouseX < this.x + this.width/2 && mouseY > this.y - this.height/2 && mouseY < this.y + this.height/2;
@@ -157,19 +189,33 @@ class Button {
   }
 }
 
-class Plants {
-  constructor(x, y, theImage, damage, fireSpeed, health){
+function buttonsupdate(){
+  for(let i = buttonAR.length-1; i >= 0; i --){
+    buttonAR[i].display();
+  }
+}
+
+class Plant{
+  constructor(x, y, damage, price, bulletSpeed, fireSpeed, health, color){
     this.x = x;
     this.y = y;
-    this.img = theImage;
+    // this.img = theImage;
     this.damage = damage;
+    this.price = price;
+    this.bulletSpeed = bulletSpeed;
     this.fireSpeed = fireSpeed;
     this.health = health;
+    this.color = color;
     this.bulletAR = [];
+    this.sprite = new Sprite(this.x, this.y);
+    this.sprite.color = this.color;
+    this.sprite.collider = "k";
   }
 
   display(){
-    image(this.img, this.x, this.y);
+    // image(this.img, this.x, this.y);
+    this.sprite.x = this.x;
+    this.sprite.y = this.y;
   }
 
   animate(){
@@ -195,18 +241,26 @@ class Bullet {
   }
 
   display(){
-    image(this.img, this.x, this.y);
+    circle(this.x, this.y, 10);
+    // image(this.img, this.x, this.y);
   }
 
   update(){
     this.x += this.dx;
-    if (!this.isHitTarget()){ // make bullet disapear after.
+    if (this.isHitTarget()){ // make bullet disapear after.
+      this.bulletAR.splice(this.bulletAR.indexOf(this), 1);
+    }
+    if (!this.isOnScreen()){
       this.bulletAR.splice(this.bulletAR.indexOf(this), 1);
     }
   }
 
   isHitTarget(){
     return this.x >= width; // fix to >= zombie x
+  }
+
+  isOnScreen(){
+    return this.x > windowWidth;
   }
 }
 
@@ -218,6 +272,12 @@ class Zombie {
     this.img = theImage;
     this.damage = damage;
     this.health = health;
+  }
+
+  newZombie(){
+    zombie = new Sprite();
+    zombieCreated = true;
+
   }
 
   display(){
@@ -233,13 +293,6 @@ class Zombie {
   }
 }
 
-function checkButton(button){
-  if (gameState === button.state) {
-    if (button.mouseIsHovering()) {
-      gameState = button.changeState;
-    }
-  }
-}
 
 function placeThePlant(spriteName, plantButton, typeOfPlant, plantCreated, color){
   if (gameState === plantButton.changeState){
@@ -255,55 +308,67 @@ function placeThePlant(spriteName, plantButton, typeOfPlant, plantCreated, color
   }
 }
 
-function mousePressed(){
-  checkButton(startButton);
-  checkButton(shopButton);
-  checkButton(backShopButton);
-  checkButton(peaPlantButton);
-  checkButton(walnutPlantButton);
-  checkButton(shovelButton);
-  checkButton(instructionsbutton);
-  if (gameState === shovelButton.changeState){
-    if (shovelButton.mouseIsHovering()){
-      shovelCreated = true;
-      shovel = new Sprite(mouseX, mouseY, 50,50);
-      shovel.shapeColor = color(0,155,155);
-      shovel.collider = "k";
-      gameState = "PlacingPlant";
-      plantType = "Shovel";
-      removingPlant = true;
-    }
+function checkPlant(){
+  if (gameState === "plant1"){
+    tempPlant = new Plant(mouseX, mouseY, 5, 100, 2, 1.5, 100, "blue");
+    gameState = "Plants";
+
   }
-  if (gameState === peaPlantButton.changeState){ // Turn this into an array
-    if (peaPlantButton.mouseIsHovering()){
-      peaPlantCreated = true;
-      peaPlant = new Sprite(mouseX, mouseY, 50, 50); // dragging peaPlant
-      peaPlant.shapeColor = color(255,0 ,0);
-      peaPlant.collider = "k";
-      gameState = "PlacingPlant";
-      plantType = "Pea";
-      placePlant = true;
-      peaPlantAR.push(peaPlant);
-    }
+  else{
+    gameState = "Game";
   }
-  if (gameState === walnutPlantButton.changeState){
-    if (walnutPlantButton.mouseIsHovering()){
-      walnutCreated = true;
-      walnut = new Sprite(mouseX, mouseY, 50, 50); // dragging walnutPlant
-      walnut.shapeColor = color(255,255,0);
-      walnut.collider = "k";
-      gameState = "PlacingPlant";
-      plantType = "Walnut";
-      placePlant = true;
-      walnutAR.push(walnut);
-    }
-  }
-  
 }
 
+function mousePressed(){
+  if (gameState === "Plants"){
+    plantAR.push(tempPlant);
+    tempPlant = "NA";
+    gameState === "Game";
+    console.log("yes");
+  }
+
+  for(let i = buttonAR.length-1; i >= 0; i --){
+    buttonAR[i].clicked();
+  }
+
+  // if (gameState === shovelButton.changeState){
+  //   if (shovelButton.mouseIsHovering()){
+  //     shovelCreated = true;
+  //     shovel = new Sprite(mouseX, mouseY, 50,50);
+  //     shovel.shapeColor = color(0,155,155);
+  //     shovel.collider = "k";
+  //     gameState = "PlacingPlant";
+  //     plantType = "Shovel";
+  //     removingPlant = true;
+  //   }
+  // }
+  // if (gameState === peaPlantButton.changeState){ // Turn this into an array
+  //   if (peaPlantButton.mouseIsHovering()){
+  //     peaPlantCreated = true;
+  //     peaPlant = new Sprite(mouseX, mouseY, 50, 50); // dragging peaPlant
+  //     peaPlant.shapeColor = color(255,0 ,0);
+  //     peaPlant.collider = "k";
+  //     gameState = "PlacingPlant";
+  //     plantType = "Pea";
+  //     placePlant = true;
+  //     peaPlantAR.push(peaPlant);
+  //   }
+  // }
+  // if (gameState === walnutPlantButton.changeState){
+  //   if (walnutPlantButton.mouseIsHovering()){
+  //     walnutCreated = true;
+  //     walnut = new Sprite(mouseX, mouseY, 50, 50); // dragging walnutPlant
+  //     walnut.shapeColor = color(255,255,0);
+  //     walnut.collider = "k";
+  //     gameState = "PlacingPlant";
+  //     plantType = "Walnut";
+  //     placePlant = true;
+  //     walnutAR.push(walnut);
+  //   }
+  // }
+  
 
 
-function mouseReleased(){
   if(gameState === "PlacingPlant") { // Checks if mouseclicked while in placing plants mode
     PlantPlaced = true;
   }
@@ -311,13 +376,20 @@ function mouseReleased(){
     gameState = "Game";
     PlantPlaced = false;
   } 
-  removePlant();
+  
   putPlantInGrid(walnut, walnutCreated);
   putPlantInGrid(peaPlant, peaPlantCreated);
-  
+  removePlant(shovel);
+
 }
 
-function removePlant() { // Problem here
+
+
+function mouseReleased(){
+  //
+}
+
+function removePlant(shovel) { // Problem here
   if (shovelCreated){
     let gridX = Math.floor(shovel.x / cellWidth);
     let gridY = Math.floor(shovel.y / cellHeight);
@@ -332,10 +404,12 @@ function removePlant() { // Problem here
 }
 
 function checkPlantAR(plantAR){
-  let grid1X = Math.floor(shovel.x / cellWidth) * (width / grid[0].length) + width / grid[0].length / 2;
-  let grid1Y = Math.floor(shovel.y / cellHeight) * (height / grid.length) + height / grid.length / 2;
+  let gridX = Math.floor(shovel.x / cellWidth);
+  let gridY = Math.floor(shovel.y / cellHeight);
+  let grid1X = gridX * (width / grid[0].length) + width / grid[0].length / 2;
+  let grid1Y = gridY * (height / grid.length) + height / grid.length / 2;
   for (let i=0; i<plantAR.length; i++){
-    if (plantAR[i].x === grid1X && plantAR[i].y === grid1Y){ // move this
+    if (plantAR[i].x === grid1X && plantAR[i].y === grid1Y){
       plantAR[i].remove();
       plantAR.splice(plantAR.indexOf(this), 1);
     }
