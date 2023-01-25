@@ -21,15 +21,8 @@ let refund = false;
 let sun = 500;
 let centerX;
 let centerXAR = [];
-
 let enemy; 
 let e1; 
-let e2;
-let e3;
-let e4;
-let e5;
-let e6;
-let boss;
 let waveDone = true;
 let sometime2 = 0;
 let wave = 1;
