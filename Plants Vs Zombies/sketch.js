@@ -173,6 +173,9 @@ function setup() {
   buttonAR.push(button);
   button = new Button(3.5*cellWidth,0+cellHeight*0.5,cellWidth,cellHeight,"blue","red","plant4","shop","Repeater");//buy Plant 4
   buttonAR.push(button);
+
+  button = new Button(4.5*cellWidth,0+cellHeight*0.5,cellWidth,cellHeight,"blue","red","shovel","shop","Shovel");
+  buttonAR.push(button);
 }
 
 function addMoreSun(){
@@ -190,7 +193,6 @@ function updateSun(){
 }
 
 function draw() { 
-  
   background(220);
   clear();
   displayGrid(grid);
@@ -467,7 +469,7 @@ function checkPlant(){
 
 function makeWave(){
   if (gamestate === "Game" && waveDone){
-    if (wave ===1){
+    if (wave === 1){
       createWaves(10);
     }
   }
