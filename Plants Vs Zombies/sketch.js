@@ -491,6 +491,6 @@ function spawnWaves(){
   }
 }
 
-function endScreen(){
+function winScreen(){
   text("YOU WIN!", width/2, height/2);
 }
